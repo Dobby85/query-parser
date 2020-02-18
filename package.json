@@ -1,0 +1,27 @@
+{
+  "name": "query-parser",
+  "version": "1.0.0",
+  "description": "Simple query parser",
+  "main": "index.js",
+  "scripts": {
+    "test-debug": "mocha ./test --watch",
+    "test": "mocha ./test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Dobby85/query-parser.git"
+  },
+  "keywords": [
+    "query",
+    "parser"
+  ],
+  "author": "Maxime Magné",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Dobby85/query-parser/issues"
+  },
+  "homepage": "https://github.com/Dobby85/query-parser#readme",
+  "devDependencies": {
+    "mocha": "^7.0.1"
+  }
+}
