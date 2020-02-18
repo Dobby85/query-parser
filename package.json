@@ -1,5 +1,5 @@
 {
-  "name": "query-parser",
+  "name": "simple-query-parser",
   "version": "1.0.0",
   "description": "Simple query parser",
   "main": "index.js",

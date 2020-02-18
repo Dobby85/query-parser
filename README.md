@@ -13,7 +13,7 @@ npm i --save query-parser
 Then you can start using the module
 
 ```js
-const queryParser = require('query-parser')
+const queryParser = require('simple-query-parser')
 
 // ...
 ```
