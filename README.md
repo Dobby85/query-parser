@@ -20,6 +20,8 @@ const queryParser = require('simple-query-parser')
 
 ## How it works?
 
+### Basic value
+
 This module needs an object with parsed queries. With express, you can get it in `req.query`.
 
 For example, the following route
@@ -63,6 +65,31 @@ let parsedParams = queryParser.parse(queryParams)
 
 If your values could be convert to int or float number, query-parser will do it automatically.
 
+### Array value
+
+Simple query parser also handle arrays.
+
+In the URL, add a coma between all your values and this will generate an array.
+
+```
+https://mywebsite.com/product?type=white,yellow,pink
+```
+
+With this URL, query parser will return the following object:
+
+```js
+const queryParser = require('query-parser')
+
+let parsedParams = queryParser.parse(queryParams)
+
+// parseParams contains
+[{
+  key: 'type',
+  value: ['white', 'yellow', 'pink'],
+  comparator: 'in'
+}]
+```
+
 ### Compators
 
 Here is the list of comparator.
@@ -72,8 +99,10 @@ Here is the list of comparator.
 `gte` -> `>=`  
 `gt` -> `>`  
 `df` -> `!=`  
-`eq` -> `=`
+`eq` -> `=`  
+`lk` -> `LIKE`
 
+*Note: If you choose to use the `lk` comparator, a `%` will be added on both side of your value.*
 
 ## Limit
 

@@ -51,6 +51,28 @@ describe('Query parser', () => {
         comparator: '<='
       }])
     })
+
+    it('should parse an array with int values', () => {
+      let obj = { 'price': '12,25,26,28' }
+      let result = queryParser.parse(obj)
+
+      assert.deepStrictEqual(result, [{
+        key: 'price',
+        value: [12, 25, 26, 28],
+        comparator: '='
+      }])
+    })
+
+    it('should parse an array with string values', () => {
+      let obj = { 'name': 'toto,tata,titi' }
+      let result = queryParser.parse(obj)
+
+      assert.deepStrictEqual(result, [{
+        key: 'name',
+        value: ['toto', 'tata', 'titi'],
+        comparator: '='
+      }])
+    })
   })
 
   describe('Parse to int if number', () => {

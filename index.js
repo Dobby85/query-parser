@@ -4,7 +4,8 @@ const comparatorObject = {
   lt: '<',
   lte: '<=',
   df: '!=',
-  eq: '='
+  eq: '=',
+  lk: 'LIKE'
 }
 
 const queryParserFunctions = {
@@ -41,7 +42,15 @@ const queryParserFunctions = {
 
         if (comparatorObject[splittedValue[0]] !== undefined) {
           searched.comparator = comparatorObject[splittedValue[0]]
-          searched.value = this.parseToIntIfNumber(splittedValue[1])
+
+          searched.value = (comparatorObject[splittedValue[0]] !== 'LIKE') ? this.parseToIntIfNumber(splittedValue[1]) : `%${splittedValue[1]}%`
+        }
+      } else if (value.includes(',')) {
+        let splittedValue = value.split(',')
+        searched.value = []
+
+        for (let i = 0; i < splittedValue.length; i++) {
+          searched.value.push(this.parseToIntIfNumber(splittedValue[i]))
         }
       } else {
         searched.value = this.parseToIntIfNumber(value)
