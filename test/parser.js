@@ -73,6 +73,17 @@ describe('Query parser', () => {
         comparator: '='
       }])
     })
+
+    it('should parse a version number', () => {
+      let obj = { 'version': '1.0.0' }
+      let result = queryParser.parse(obj)
+
+      assert.deepStrictEqual(result, [{
+        key: 'version',
+        value: '1.0.0',
+        comparator: '='
+      }])
+    })
   })
 
   describe('Parse to int if number', () => {

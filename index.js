@@ -68,6 +68,12 @@ const queryParserFunctions = {
    */
   parseToIntIfNumber : function (value) {
     if (this.containsOnlyNumber(value)) {
+      const count = (value.match(/\./g) || []).length;
+
+      if (count >= 2) {
+        return value
+      }
+
       if (value.includes('.')) {
         return parseFloat(value)
       }
