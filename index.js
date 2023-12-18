@@ -26,37 +26,41 @@ const queryParserFunctions = {
 
     for (let i = 0; i < Object.keys(queryParams).length; i++) {
       let key = Object.keys(queryParams)[i].toString()
-      let value = queryParams[key].toString()
-      let searched = {
-        key: key,
-        value: null,
-        comparator: '='
-      }
+      let values = (Array.isArray(queryParams[key]) === true) ? queryParams[key] : [queryParams[key]]
 
-      if (!this.containsNumberOrLetter(key)) {
-        continue
-      }
-
-      if (value.includes(':')) {
-        let splittedValue = value.split(':')
-
-        if (comparatorObject[splittedValue[0]] !== undefined) {
-          searched.comparator = comparatorObject[splittedValue[0]]
-
-          searched.value = (comparatorObject[splittedValue[0]] !== 'LIKE') ? this.parseToIntIfNumber(splittedValue[1]) : `%${splittedValue[1]}%`
+      for (let j = 0; j < values.length; j++) {
+        let value = values[j]
+        let searched = {
+          key: key,
+          value: null,
+          comparator: '='
         }
-      } else if (value.includes(',')) {
-        let splittedValue = value.split(',')
-        searched.value = []
 
-        for (let i = 0; i < splittedValue.length; i++) {
-          searched.value.push(this.parseToIntIfNumber(splittedValue[i]))
+        if (!this.containsNumberOrLetter(key)) {
+          continue
         }
-      } else {
-        searched.value = this.parseToIntIfNumber(value)
-      }
 
-      paramsArray.push(searched)
+        if (value.includes(':')) {
+          let splittedValue = value.split(':')
+
+          if (comparatorObject[splittedValue[0]] !== undefined) {
+            searched.comparator = comparatorObject[splittedValue[0]]
+
+            searched.value = (comparatorObject[splittedValue[0]] !== 'LIKE') ? this.parseToIntIfNumber(splittedValue[1]) : `%${splittedValue[1]}%`
+          }
+        } else if (value.includes(',')) {
+          let splittedValue = value.split(',')
+          searched.value = []
+
+          for (let k = 0; k < splittedValue.length; k++) {
+            searched.value.push(this.parseToIntIfNumber(splittedValue[k]))
+          }
+        } else {
+          searched.value = this.parseToIntIfNumber(value)
+        }
+
+        paramsArray.push(searched)
+      }
     }
 
     return paramsArray

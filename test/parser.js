@@ -41,6 +41,25 @@ describe('Query parser', () => {
       }])
     })
 
+    it('should convert an object with arrays query with comparators to array', () => {
+      let obj = { price: ['gt:23', 'lt:30'], orderBy: 'df:recent' }
+      let result = queryParser.parse(obj)
+
+      assert.deepStrictEqual(result, [{
+        key: 'price',
+        value: 23,
+        comparator: '>'
+      }, {
+        key: 'price',
+        value: 30,
+        comparator: '<'
+      }, {
+        key: 'orderBy',
+        value: 'recent',
+        comparator: '!='
+      }])
+    })
+
     it('should ignore keys which contains special caracters', () => {
       let obj = { 'pri;ce': 'gt:23', 'order By': 'df:recent', page: 'lte:20' }
       let result = queryParser.parse(obj)

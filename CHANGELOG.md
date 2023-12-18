@@ -1,5 +1,9 @@
 # Simple query parse
 
+## V1.1.2
+
+- Handle multiple times the same parameters in query
+
 ## v1.1.1
 
 - Fix bug to handle multiple points with number as string (eg: 1.0.0)
