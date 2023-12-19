@@ -1,5 +1,9 @@
 # Simple query parse
 
+## V1.1.3
+
+- Fix bug with integer in query
+
 ## V1.1.2
 
 - Handle multiple times the same parameters in query

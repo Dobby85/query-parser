@@ -29,7 +29,7 @@ const queryParserFunctions = {
       let values = (Array.isArray(queryParams[key]) === true) ? queryParams[key] : [queryParams[key]]
 
       for (let j = 0; j < values.length; j++) {
-        let value = values[j]
+        let value = values[j].toString()
         let searched = {
           key: key,
           value: null,
