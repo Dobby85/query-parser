@@ -104,7 +104,8 @@ const queryParserFunctions = {
     for (let i = 0; i < value.length; i++) {
       let code = value[i].charCodeAt(0)
 
-      if (code < 48 || (code > 57 && code < 65) || (code > 90 && code < 97) || code > 122) {
+      // Allow [-_a-zA-Z0-9] in key
+      if (code !== 45 && code !== 95 && (code < 48 || (code > 57 && code < 65) || (code > 90 && code < 97) || code > 122)) {
         return false
       }
     }

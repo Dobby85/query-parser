@@ -1,5 +1,9 @@
 # Simple query parse
 
+## V1.1.4
+
+- Accept - and _ in key
+
 ## V1.1.3
 
 - Fix bug with integer in query
