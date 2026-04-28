@@ -1,5 +1,8 @@
 # Simple query parse
 
+## V1.2.0
+- Handle grouped key to handle and and or operators
+
 ## V1.1.4
 
 - Accept - and _ in key

@@ -214,4 +214,112 @@ describe('Query parser', () => {
       assert.strictEqual(queryParser.containsOnlyNumber(''), false)
     })
   })
+
+  describe('Grouped filters', () => {
+    it('should parse a plain object as a grouped filter with integer values', () => {
+      let obj = { variations: { '10000': '1000,1001', '10001': '1004' } }
+      let result = queryParser.parse(obj)
+      assert.deepStrictEqual(result, [{
+        key: 'variations',
+        comparator: 'grouped',
+        value: [
+          { groupKey: '10000', values: [1000, 1001] },
+          { groupKey: '10001', values: [1004] }
+        ]
+      }])
+    })
+
+    it('should parse a grouped filter with string values', () => {
+      let obj = { colors: { 'axis1': 'red,blue', 'axis2': 'green' } }
+      let result = queryParser.parse(obj)
+      assert.deepStrictEqual(result, [{
+        key: 'colors',
+        comparator: 'grouped',
+        value: [
+          { groupKey: 'axis1', values: ['red', 'blue'] },
+          { groupKey: 'axis2', values: ['green'] }
+        ]
+      }])
+    })
+
+    it('should parse a grouped filter with a single value per group', () => {
+      let obj = { filters: { 'grp1': '42' } }
+      let result = queryParser.parse(obj)
+      assert.deepStrictEqual(result, [{
+        key: 'filters',
+        comparator: 'grouped',
+        value: [{ groupKey: 'grp1', values: [42] }]
+      }])
+    })
+
+    it('should apply comparator prefix to grouped values', () => {
+      let obj = { price: { 'range1': 'gte:10', 'range2': 'lte:50' } }
+      let result = queryParser.parse(obj)
+      assert.deepStrictEqual(result, [{
+        key: 'price',
+        comparator: 'grouped',
+        value: [
+          { groupKey: 'range1', values: [10], comparator: '>=' },
+          { groupKey: 'range2', values: [50], comparator: '<=' }
+        ]
+      }])
+    })
+
+    it('should apply LIKE wrapping in a grouped filter', () => {
+      let obj = { name: { 'grp1': 'lk:wine' } }
+      let result = queryParser.parse(obj)
+      assert.deepStrictEqual(result, [{
+        key: 'name',
+        comparator: 'grouped',
+        value: [
+          { groupKey: 'grp1', values: ['%wine%'], comparator: 'LIKE' }
+        ]
+      }])
+    })
+
+    it('should coexist with flat params without regression', () => {
+      let obj = { page: '1', variations: { '10000': '1000,1001' }, orderBy: 'price' }
+      let result = queryParser.parse(obj)
+      assert.deepStrictEqual(result, [
+        { key: 'page', value: 1, comparator: '=' },
+        { key: 'variations', comparator: 'grouped', value: [{ groupKey: '10000', values: [1000, 1001] }] },
+        { key: 'orderBy', value: 'price', comparator: '=' }
+      ])
+    })
+
+    it('should skip the grouped key if the outer key contains special characters', () => {
+      let obj = { 'var;iations': { '10000': '1000' }, page: '1' }
+      let result = queryParser.parse(obj)
+      assert.deepStrictEqual(result, [{ key: 'page', value: 1, comparator: '=' }])
+    })
+
+    it('should ignore groups whose values are empty after parsing', () => {
+      let obj = { variations: { '10000': '', '10001': '1004' } }
+      let result = queryParser.parse(obj)
+      assert.deepStrictEqual(result, [{
+        key: 'variations',
+        comparator: 'grouped',
+        value: [{ groupKey: '10001', values: [1004] }]
+      }])
+    })
+
+    it('should produce no entry when all groups are empty', () => {
+      let obj = { variations: { '10000': '' } }
+      let result = queryParser.parse(obj)
+      assert.deepStrictEqual(result, [])
+    })
+
+    it('should accept numeric-only sub-keys without validation', () => {
+      let obj = { tags: { '123': 'SWEAT,SHORT', '456': 'JEAN' } }
+      let result = queryParser.parse(obj)
+      assert.deepStrictEqual(result, [{
+        key: 'tags',
+        comparator: 'grouped',
+        value: [
+          { groupKey: '123', values: ['SWEAT', 'SHORT'] },
+          { groupKey: '456', values: ['JEAN'] }
+        ]
+      }])
+    })
+  })
 })

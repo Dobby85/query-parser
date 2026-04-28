@@ -26,6 +26,50 @@ const queryParserFunctions = {
 
     for (let i = 0; i < Object.keys(queryParams).length; i++) {
       let key = Object.keys(queryParams)[i].toString()
+
+      let rawValue = queryParams[key]
+      if (typeof rawValue === 'object' && rawValue !== null && !Array.isArray(rawValue)) {
+        if (!this.containsNumberOrLetter(key)) continue
+
+        let groups = []
+        let subKeys = Object.keys(rawValue)
+        for (let k = 0; k < subKeys.length; k++) {
+          let groupKey = subKeys[k]
+          let groupStr = rawValue[groupKey].toString()
+          let groupValues = []
+          let groupComparator = '='
+
+          if (groupStr.includes(':')) {
+            let parts = groupStr.split(':')
+            if (comparatorObject[parts[0]] !== undefined) {
+              groupComparator = comparatorObject[parts[0]]
+              let subVals = parts[1].includes(',') ? parts[1].split(',') : [parts[1]]
+              for (let m = 0; m < subVals.length; m++) {
+                groupValues.push(groupComparator === 'LIKE' ? `%${subVals[m]}%` : this.parseToIntIfNumber(subVals[m]))
+              }
+            }
+          } else if (groupStr.includes(',')) {
+            let subVals = groupStr.split(',')
+            for (let m = 0; m < subVals.length; m++) {
+              groupValues.push(this.parseToIntIfNumber(subVals[m]))
+            }
+          } else if (groupStr.length > 0) {
+            groupValues.push(this.parseToIntIfNumber(groupStr))
+          }
+
+          if (groupValues.length > 0) {
+            let entry = { groupKey: groupKey, values: groupValues }
+            if (groupComparator !== '=') entry.comparator = groupComparator
+            groups.push(entry)
+          }
+        }
+
+        if (groups.length > 0) {
+          paramsArray.push({ key: key, comparator: 'grouped', value: groups })
+        }
+        continue
+      }
+
       let values = (Array.isArray(queryParams[key]) === true) ? queryParams[key] : [queryParams[key]]
 
       for (let j = 0; j < values.length; j++) {
